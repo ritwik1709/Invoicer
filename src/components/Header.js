@@ -86,10 +86,6 @@ const Header = ({
 
       pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
       
-      // Convert PDF to Blob
-      const pdfBlob = pdf.output('blob');
-      const file = new File([pdfBlob], 'invoice.pdf', { type: 'application/pdf' });
-      
       // Show email form
       setIsEmailFormOpen(true);
 
