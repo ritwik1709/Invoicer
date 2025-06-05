@@ -2,8 +2,9 @@ import React, { useState } from 'react'
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import EmailForm from './EmailForm';
+import ReactToPrint from 'react-to-print';
 
-const Header = ({ invoiceRef, dealerEmail, invoiceNumber, invoiceDate, dueDate, total }) => {
+const Header = ({ invoiceRef, dealerEmail, invoiceNumber, invoiceDate, dueDate, total, isDarkMode }) => {
   const [isEmailFormOpen, setIsEmailFormOpen] = useState(false);
   const [invoiceFile, setInvoiceFile] = useState(null);
 
@@ -97,23 +98,30 @@ const Header = ({ invoiceRef, dealerEmail, invoiceNumber, invoiceDate, dueDate, 
 
   return (
     <>
-      <header className='flex flex-col items-center justify-center mb-5 xl:flex-row xl:justify-between'>
+      <header className={`flex justify-between items-start ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
         <div>
-          <h2 className='font-bold uppercase tracking-wide text-4xl mb-3'>Invoicer</h2>
+          <h1 className="text-3xl font-bold mb-2">INVOICE</h1>
+          <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Invoice Number: {invoiceNumber}</p>
+          <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Date: {invoiceDate}</p>
+          <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Due Date: {dueDate}</p>
         </div>
 
-        <div className='no-print'>
-          <ul className='flex items-center justify-between flex-wrap'>
-            <li>
-              <button onClick={handlePrint} className='bg-gray-500 text-white font-bold py-2 px-8 rounded shadow border-2 border-gray-500 hover:bg-transparent hover:text-gray-500 transition-all duration-300'>Print</button>
-            </li>
-            <li className='mx-2'>
-              <button onClick={handleDownload} className='bg-blue-500 text-white font-bold py-2 px-8 rounded shadow border-2 border-blue-500 hover:bg-transparent hover:text-blue-500 transition-all duration-300'>Download</button>
-            </li>
-            <li>
-              <button onClick={handleSend} className='bg-green-500 text-white font-bold py-2 px-8 rounded shadow border-2 border-green-500 hover:bg-transparent hover:text-green-500 transition-all duration-300'>Send</button>
-            </li>
-          </ul>
+        <div className="text-right">
+          <ReactToPrint
+            trigger={() => (
+              <button className={`px-4 py-2 rounded-lg shadow-sm border-2 ${
+                isDarkMode 
+                  ? 'bg-blue-600 text-white border-blue-600 hover:bg-transparent hover:text-blue-400' 
+                  : 'bg-blue-500 text-white border-blue-500 hover:bg-transparent hover:text-blue-500'
+              } transition-all duration-300`}
+              >
+                Print / Download
+              </button>
+            )}
+            content={() => invoiceRef.current}
+          />
+          <p className={`mt-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Total Amount: ${total}</p>
+          <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Email: {dealerEmail}</p>
         </div>
       </header>
 

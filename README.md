@@ -2,7 +2,6 @@
 
 A modern, responsive web application for creating and managing professional invoices. Built with React and styled using Tailwind CSS.
 
-![Invoice App Preview](https://i.imgur.com/your-preview-image.png)
 
 ## Features ✨
 
