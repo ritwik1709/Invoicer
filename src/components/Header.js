@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import EmailForm from './EmailForm';
-import ReactToPrint from 'react-to-print';
+import { useReactToPrint } from 'react-to-print';
 
 const Header = ({ 
   invoiceRef,
@@ -15,19 +15,19 @@ const Header = ({
 }) => {
   const [isEmailFormOpen, setIsEmailFormOpen] = useState(false);
 
-  const handlePrint = () => {
-    // Hide buttons before printing
-    const buttons = document.querySelectorAll('.no-print');
-    buttons.forEach(button => button.style.display = 'none');
-    
-    // Trigger print
-    window.print();
-    
-    // Show buttons after printing
-    setTimeout(() => {
+  const handlePrint = useReactToPrint({
+    content: () => invoiceRef.current,
+    onBeforeGetContent: () => {
+      // Hide buttons before printing
+      const buttons = document.querySelectorAll('.no-print');
+      buttons.forEach(button => button.style.display = 'none');
+    },
+    onAfterPrint: () => {
+      // Show buttons after printing
+      const buttons = document.querySelectorAll('.no-print');
       buttons.forEach(button => button.style.display = '');
-    }, 1000);
-  };
+    }
+  });
 
   const handleDownload = () => {
     // Hide buttons before capturing
@@ -101,23 +101,18 @@ const Header = ({
   return (
     <div className={`mb-8 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
       <div className="flex justify-between items-start mb-4">
-        <h1 className="text-3xl font-bold">Invoice</h1>
+        <h1 className="text-3xl font-bold">Invoicer</h1>
         <div className="flex gap-2">
-          <ReactToPrint
-            trigger={() => (
-              <button 
-                className={`px-4 py-2 rounded-md ${
-                  isDarkMode 
-                    ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                    : 'bg-blue-500 text-white hover:bg-blue-600'
-                } transition-colors duration-200 no-print`}
-                onClick={handlePrint}
-              >
-                Print
-              </button>
-            )}
-            content={() => invoiceRef.current}
-          />
+          <button 
+            className={`px-4 py-2 rounded-md ${
+              isDarkMode 
+                ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                : 'bg-blue-500 text-white hover:bg-blue-600'
+            } transition-colors duration-200 no-print`}
+            onClick={handlePrint}
+          >
+            Print
+          </button>
           <button 
             className={`px-4 py-2 rounded-md ${
               isDarkMode 

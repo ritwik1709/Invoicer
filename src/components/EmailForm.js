@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { getAuthUrl, sendEmail } from '../config/gmail';
 
-const EmailForm = ({ isOpen, onClose, invoiceFile, dealerEmail, invoiceNumber, invoiceDate, dueDate, total }) => {
+const EmailForm = ({ isOpen, onClose, dealerEmail, invoiceNumber, invoiceDate, dueDate, total }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    message: '',
-    file: null
+    message: ''
   });
 
   const [accessToken, setAccessToken] = useState(null);
@@ -20,10 +19,10 @@ const EmailForm = ({ isOpen, onClose, invoiceFile, dealerEmail, invoiceNumber, i
   }, []);
 
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: files ? files[0] : value
+      [name]: value
     }));
   };
 
@@ -77,8 +76,7 @@ const EmailForm = ({ isOpen, onClose, invoiceFile, dealerEmail, invoiceNumber, i
         accessToken,
         formData.email,
         `Invoice from ${dealerEmail.split('@')[0]} - Invoice #${invoiceNumber}`,
-        emailContent,
-        invoiceFile
+        emailContent
       );
 
       if (response.error) {
@@ -87,7 +85,7 @@ const EmailForm = ({ isOpen, onClose, invoiceFile, dealerEmail, invoiceNumber, i
 
       alert("Email sent successfully!");
       onClose();
-      setFormData({ name: '', email: '', message: '', file: null });
+      setFormData({ name: '', email: '', message: '' });
     } catch (error) {
       console.error("Error:", error);
       alert(`Failed to send email: ${error.message}`);
