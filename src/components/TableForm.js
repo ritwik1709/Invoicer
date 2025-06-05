@@ -1,188 +1,170 @@
-import React, { useState } from 'react'
-import { v4 } from 'uuid'
-import { AiFillDelete, AiFillEdit } from 'react-icons/ai'
+import React, { useState } from 'react';
 
 const TableForm = ({ 
-  description, setDescription, 
-  quantity, setQuantity, 
-  price, setPrice, 
-  amount, setAmount, 
-  list, setList,
+  items, 
+  setItems, 
   isDarkMode 
 }) => {
-    const [isEditing, setIsEditing] = useState(false);
+  const [description, setDescription] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [price, setPrice] = useState("");
+  const [amount, setAmount] = useState("");
 
-    const calcAmount = (quantity, price) => {
-        setAmount(quantity * price)
+  const addItem = () => {
+    if (!description || !quantity || !price) {
+      alert("Please fill all fields!");
+      return;
     }
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const newItem = {
+      id: Date.now(),
+      description,
+      quantity: parseFloat(quantity),
+      rate: parseFloat(price),
+      amount: (parseFloat(quantity) * parseFloat(price)).toFixed(2)
+    };
 
-        const newItem = {
-            id: v4(),
-            description: description,
-            quantity: quantity,
-            price: price,
-            amount: amount
-        }
-        setDescription("");
-        setQuantity("");
-        setPrice("");
-        setAmount("");
+    setItems([...items, newItem]);
+    
+    // Clear form
+    setDescription("");
+    setQuantity("");
+    setPrice("");
+    setAmount("");
+  };
 
-        setList([...list, newItem])
+  const removeItem = (id) => {
+    setItems(items.filter(item => item.id !== id));
+  };
+
+  const calculateAmount = (qty, prc) => {
+    if (qty && prc) {
+      setAmount((parseFloat(qty) * parseFloat(prc)).toFixed(2));
+    } else {
+      setAmount("");
     }
+  };
 
-    const deleteRow = (id) => {
-        setList(list.filter((row) => row.id !== id))
-    }
+  return (
+    <div className={`mb-8 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+      {/* Add Item Form */}
+      <div className={`mb-6 p-4 rounded-lg ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+        <h3 className={`text-lg font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Add New Item</h3>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">Description</label>
+            <input
+              type="text"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Item description"
+              className={`w-full p-2 border rounded-md ${
+                isDarkMode 
+                  ? 'bg-gray-800 border-gray-700 text-white focus:border-blue-500' 
+                  : 'bg-white border-gray-300 focus:border-blue-500'
+              }`}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Quantity</label>
+            <input
+              type="number"
+              value={quantity}
+              onChange={(e) => {
+                setQuantity(e.target.value);
+                calculateAmount(e.target.value, price);
+              }}
+              placeholder="Quantity"
+              className={`w-full p-2 border rounded-md ${
+                isDarkMode 
+                  ? 'bg-gray-800 border-gray-700 text-white focus:border-blue-500' 
+                  : 'bg-white border-gray-300 focus:border-blue-500'
+              }`}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Price</label>
+            <input
+              type="number"
+              value={price}
+              onChange={(e) => {
+                setPrice(e.target.value);
+                calculateAmount(quantity, e.target.value);
+              }}
+              placeholder="Price"
+              className={`w-full p-2 border rounded-md ${
+                isDarkMode 
+                  ? 'bg-gray-800 border-gray-700 text-white focus:border-blue-500' 
+                  : 'bg-white border-gray-300 focus:border-blue-500'
+              }`}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Amount</label>
+            <input
+              type="text"
+              value={amount}
+              readOnly
+              className={`w-full p-2 border rounded-md ${
+                isDarkMode 
+                  ? 'bg-gray-800 border-gray-700 text-gray-400' 
+                  : 'bg-gray-100 border-gray-300 text-gray-500'
+              }`}
+            />
+          </div>
+        </div>
+        <div className="mt-4">
+          <button
+            onClick={addItem}
+            className={`px-4 py-2 rounded-md ${
+              isDarkMode 
+                ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                : 'bg-blue-500 text-white hover:bg-blue-600'
+            } transition-colors duration-200`}
+          >
+            Add Item
+          </button>
+        </div>
+      </div>
 
-    const editRow = (id) => {
-        const editingRow = list.find((row) => row.id === id);
-        setIsEditing(true);
-        setDescription(editingRow.description);
-        setQuantity(editingRow.quantity);
-        setPrice(editingRow.price);
-
-        setList(list.filter((row) => row.id !== id))
-    }
-
-    const inputClasses = `mt-1 block w-full rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 ${
-        isDarkMode 
-            ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
-            : 'border-gray-300'
-    }`;
-
-    const labelClasses = isDarkMode ? 'text-gray-300' : 'text-gray-700';
-
-    const tableClasses = isDarkMode 
-        ? 'w-full mb-16 text-gray-200 bg-gray-800'
-        : 'w-full mb-16 text-gray-600 bg-white';
-
-    const headerClasses = isDarkMode
-        ? 'bg-gray-700 text-white p-1 font-bold'
-        : 'bg-gray-100 text-gray-900 p-1 font-bold';
-
-    const rowClasses = isDarkMode
-        ? 'border-gray-700 hover:bg-gray-700'
-        : 'border-gray-200 hover:bg-gray-50';
-
-    const cellClasses = isDarkMode
-        ? 'py-2 px-4 text-gray-200'
-        : 'py-2 px-4 text-gray-700';
-
-    return (
-        <>
-            <form action="" onSubmit={handleSubmit} className="space-y-6">
-                <div className='flex flex-col'>
-                    <label htmlFor="description" className={labelClasses}>Item Description</label>
-                    <input
-                        type="text"
-                        name="description"
-                        id="description"
-                        placeholder='Item description'
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        className={inputClasses}
-                    />
-                </div>
-
-                <div className='md:grid grid-cols-3 gap-10'>
-                    <div className='flex flex-col'>
-                        <label htmlFor="quantity" className={labelClasses}>Quantity</label>
-                        <input
-                            type="text"
-                            name="quantity"
-                            id="quantity"
-                            placeholder='Quantity'
-                            value={quantity}
-                            onChange={(e) => setQuantity(e.target.value)}
-                            className={inputClasses}
-                        />
-                    </div>
-                    <div className='flex flex-col'>
-                        <label htmlFor="price" className={labelClasses}>Price</label>
-                        <input
-                            type="text"
-                            name="price"
-                            id="price"
-                            placeholder='Price'
-                            value={price}
-                            onChange={(e) => setPrice(e.target.value)}
-                            className={inputClasses}
-                        />
-                    </div>
-                    <div className='flex flex-col'>
-                        <label htmlFor="amount" className={labelClasses}>Amount</label>
-                        <div className={`mt-1 block w-full rounded-md p-2 ${
-                            isDarkMode 
-                                ? 'bg-gray-700 text-white' 
-                                : 'bg-gray-100 text-gray-900'
-                        }`}>
-                            {calcAmount(quantity, price) !== "" ? amount : 0}
-                        </div>
-                    </div>
-                </div>
-                <button 
-                    className={`mb-10 font-bold py-2 px-8 rounded shadow border-2 transition-all duration-300 ${
-                        isDarkMode
-                            ? 'bg-blue-600 text-white border-blue-600 hover:bg-transparent hover:text-blue-400'
-                            : 'bg-blue-500 text-white border-blue-500 hover:bg-transparent hover:text-blue-500'
-                    }`} 
-                    type='submit'
-                >
-                    Add Item
-                </button>
-            </form>
-
-            <table className={tableClasses}>
-                <thead>
-                    <tr className={headerClasses}>
-                        <td className="py-2 px-4">Description</td>
-                        <td className="py-2 px-4">Quantity</td>
-                        <td className="py-2 px-4">Price</td>
-                        <td className="py-2 px-4">Amount</td>
-                        <td className="py-2 px-4">Actions</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    {list.map(({ id, description, quantity, price, amount }) => (
-                        <tr key={id} className={`${rowClasses} border-b transition-colors duration-200`}>
-                            <td className={cellClasses}>{description}</td>
-                            <td className={cellClasses}>{quantity}</td>
-                            <td className={cellClasses}>${price}</td>
-                            <td className={cellClasses}>${amount}</td>
-                            <td className={cellClasses}>
-                                <div className='flex gap-5'>
-                                    <button 
-                                        onClick={() => deleteRow(id)} 
-                                        className={`font-bold flex justify-center items-center p-1 px-2 rounded gap-1 transition duration-300 ${
-                                            isDarkMode
-                                                ? 'bg-red-900 text-red-200 hover:bg-red-800 hover:text-red-100'
-                                                : 'bg-red-100 text-red-500 hover:bg-red-300 hover:text-red-700'
-                                        }`}
-                                    >
-                                        <AiFillDelete className='mr-1' />Delete
-                                    </button>
-                                    <button 
-                                        onClick={() => editRow(id)} 
-                                        className={`font-bold flex p-1 px-2 rounded justify-center items-center gap-1 transition duration-300 ${
-                                            isDarkMode
-                                                ? 'bg-green-900 text-green-200 hover:bg-green-800 hover:text-green-100'
-                                                : 'bg-green-100 text-green-700 hover:bg-green-300 hover:text-green-900'
-                                        }`}
-                                    >
-                                        <AiFillEdit className='mr-1' />Edit
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </>
-    )
-}
+      {/* Items Table */}
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className={`${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
+              <th className="p-2 text-left">Description</th>
+              <th className="p-2 text-left">Quantity</th>
+              <th className="p-2 text-left">Price</th>
+              <th className="p-2 text-left">Amount</th>
+              <th className="p-2 text-left">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((item) => (
+              <tr key={item.id} className={`border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+                <td className="p-2">{item.description}</td>
+                <td className="p-2">{item.quantity}</td>
+                <td className="p-2">${item.rate}</td>
+                <td className="p-2">${item.amount}</td>
+                <td className="p-2">
+                  <button
+                    onClick={() => removeItem(item.id)}
+                    className={`px-3 py-1 rounded-md ${
+                      isDarkMode 
+                        ? 'bg-red-600 text-white hover:bg-red-700' 
+                        : 'bg-red-500 text-white hover:bg-red-600'
+                    } transition-colors duration-200`}
+                  >
+                    Remove
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
 
 export default TableForm; 

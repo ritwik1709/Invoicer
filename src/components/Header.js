@@ -4,9 +4,16 @@ import jsPDF from 'jspdf';
 import EmailForm from './EmailForm';
 import ReactToPrint from 'react-to-print';
 
-const Header = ({ invoiceRef, dealerEmail, invoiceNumber, invoiceDate, dueDate, total, isDarkMode }) => {
+const Header = ({ 
+  invoiceRef,
+  dealerEmail,
+  invoiceNumber,
+  invoiceDate,
+  dueDate,
+  total,
+  isDarkMode 
+}) => {
   const [isEmailFormOpen, setIsEmailFormOpen] = useState(false);
-  const [invoiceFile, setInvoiceFile] = useState(null);
 
   const handlePrint = () => {
     // Hide buttons before printing
@@ -39,7 +46,7 @@ const Header = ({ invoiceRef, dealerEmail, invoiceNumber, invoiceDate, dueDate, 
       const pdf = new jsPDF('p', 'mm', 'a4');
       
       const imgWidth = 210;
-      const pageHeight = 297;
+      // const pageHeight = 297;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
       pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
@@ -74,7 +81,7 @@ const Header = ({ invoiceRef, dealerEmail, invoiceNumber, invoiceDate, dueDate, 
       const pdf = new jsPDF('p', 'mm', 'a4');
       
       const imgWidth = 210;
-      const pageHeight = 297;
+      // const pageHeight = 297;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
       pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
@@ -82,7 +89,6 @@ const Header = ({ invoiceRef, dealerEmail, invoiceNumber, invoiceDate, dueDate, 
       // Convert PDF to Blob
       const pdfBlob = pdf.output('blob');
       const file = new File([pdfBlob], 'invoice.pdf', { type: 'application/pdf' });
-      setInvoiceFile(file);
       
       // Show email form
       setIsEmailFormOpen(true);
@@ -97,46 +103,59 @@ const Header = ({ invoiceRef, dealerEmail, invoiceNumber, invoiceDate, dueDate, 
   };
 
   return (
-    <>
-      <header className={`flex justify-between items-start ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-        <div>
-          <h1 className="text-3xl font-bold mb-2">INVOICE</h1>
-          <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Invoice Number: {invoiceNumber}</p>
-          <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Date: {invoiceDate}</p>
-          <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Due Date: {dueDate}</p>
-        </div>
-
-        <div className="text-right">
+    <div className={`mb-8 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+      <div className="flex justify-between items-start mb-4">
+        <h1 className="text-3xl font-bold">Invoice</h1>
+        <div className="flex gap-2">
           <ReactToPrint
             trigger={() => (
-              <button className={`px-4 py-2 rounded-lg shadow-sm border-2 ${
-                isDarkMode 
-                  ? 'bg-blue-600 text-white border-blue-600 hover:bg-transparent hover:text-blue-400' 
-                  : 'bg-blue-500 text-white border-blue-500 hover:bg-transparent hover:text-blue-500'
-              } transition-all duration-300`}
+              <button 
+                className={`px-4 py-2 rounded-md ${
+                  isDarkMode 
+                    ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                    : 'bg-blue-500 text-white hover:bg-blue-600'
+                } transition-colors duration-200 no-print`}
+                onClick={handlePrint}
               >
-                Print / Download
+                Print
               </button>
             )}
             content={() => invoiceRef.current}
           />
-          <p className={`mt-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Total Amount: ${total}</p>
-          <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Email: {dealerEmail}</p>
+          <button 
+            className={`px-4 py-2 rounded-md ${
+              isDarkMode 
+                ? 'bg-green-600 text-white hover:bg-green-700' 
+                : 'bg-green-500 text-white hover:bg-green-600'
+            } transition-colors duration-200 no-print`}
+            onClick={handleDownload}
+          >
+            Download PDF
+          </button>
+          <button 
+            className={`px-4 py-2 rounded-md ${
+              isDarkMode 
+                ? 'bg-purple-600 text-white hover:bg-purple-700' 
+                : 'bg-purple-500 text-white hover:bg-purple-600'
+            } transition-colors duration-200 no-print`}
+            onClick={handleSend}
+          >
+            Send Email
+          </button>
         </div>
-      </header>
+      </div>
 
       <EmailForm 
         isOpen={isEmailFormOpen}
         onClose={() => setIsEmailFormOpen(false)}
-        invoiceFile={invoiceFile}
         dealerEmail={dealerEmail}
         invoiceNumber={invoiceNumber}
         invoiceDate={invoiceDate}
         dueDate={dueDate}
         total={total}
       />
-    </>
-  )
-}
+    </div>
+  );
+};
 
 export default Header;

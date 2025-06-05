@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getAuthUrl, getTokens, sendEmail } from '../config/gmail';
+import { getAuthUrl, sendEmail } from '../config/gmail';
 
 const EmailForm = ({ isOpen, onClose, invoiceFile, dealerEmail, invoiceNumber, invoiceDate, dueDate, total }) => {
   const [formData, setFormData] = useState({

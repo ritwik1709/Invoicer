@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ClientDetails = ({clientName, clientAddress, clientEmail, isDarkMode}) => {
+const ClientDetails = ({clientName, clientAddress, isDarkMode}) => {
   return (
    <>
     <section className={`mt-8 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>

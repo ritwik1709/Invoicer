@@ -23,7 +23,6 @@ const InvoiceForm = () => {
   const [bankAcoount, setBankAccount] = useState("");
   const [clientName, setClientName] = useState("");
   const [clientAddress, setClientAddress] = useState("");
-  const [clientEmail, setClientEmail] = useState("");
   const [notes, setNotes] = useState("");
   const [phone, setPhone] = useState("");
   const [website, setWebsite] = useState("");
@@ -31,10 +30,6 @@ const InvoiceForm = () => {
   const [dueDate, setDueDate] = useState("");
   const [invoiceDate, setInvoiceDate] = useState("");
 
-  const [description, setDescription] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [price, setPrice] = useState("");
-  const [amount, setAmount] = useState("");
   const [list, setList] = useState([]);
   const [total, setTotal] = useState(0);
 
@@ -42,7 +37,6 @@ const InvoiceForm = () => {
 
   // Add new state for form validation
   const [formErrors, setFormErrors] = useState({});
-  const [isFormValid, setIsFormValid] = useState(false);
 
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -77,7 +71,6 @@ const InvoiceForm = () => {
     if (list.length === 0) errors.items = "At least one item is required";
 
     setFormErrors(errors);
-    setIsFormValid(Object.keys(errors).length === 0);
     return Object.keys(errors).length === 0;
   };
 
@@ -113,7 +106,7 @@ const InvoiceForm = () => {
               <MainDetails name={name} address={address} isDarkMode={isDarkMode} />
               <ClientDetails clientName={clientName} clientAddress={clientAddress} isDarkMode={isDarkMode} />
               <Dates invoiceNumber={invoiceNumber} invoiceDate={invoiceDate} dueDate={dueDate} isDarkMode={isDarkMode} />
-              <Table description={description} quantity={quantity} price={price} amount={amount} list={list} total={total} setTotal={setTotal} isDarkMode={isDarkMode} />
+              <Table list={list} total={total} setTotal={setTotal} isDarkMode={isDarkMode} />
               <Notes notes={notes} isDarkMode={isDarkMode} />
               <Footer name={name} email={email} phone={phone} bankName={bankName} bankAcoount={bankAcoount} website={website} isDarkMode={isDarkMode} />
 
@@ -365,11 +358,8 @@ const InvoiceForm = () => {
                   {formErrors.items && <span className="error-message text-red-500 text-sm block mb-4">{formErrors.items}</span>}
                   <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg p-4`}>
                     <TableForm
-                      description={description} setDescription={setDescription}
-                      quantity={quantity} setQuantity={setQuantity}
-                      price={price} setPrice={setPrice}
-                      amount={amount} setAmount={setAmount}
-                      list={list} setList={setList}
+                      items={list}
+                      setItems={setList}
                       isDarkMode={isDarkMode}
                     />
                   </div>

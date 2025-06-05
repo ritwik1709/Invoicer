@@ -1,7 +1,7 @@
 import React from 'react'
 import { useEffect } from 'react'
 
-const Table = ({ description, quantity, price, amount, list, total, setTotal, isDarkMode }) => {
+const Table = ({ list, total, setTotal, isDarkMode }) => {
   useEffect(() => {
     const calculateTotal = () => {
       const sum = list.reduce((acc, item) => acc + item.amount, 0);
